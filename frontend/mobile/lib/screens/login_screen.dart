@@ -7,6 +7,7 @@ import 'package:mobile/components/login/input_login.dart';
 
 // Auth service
 import 'package:mobile/services/auth_service.dart';
+import 'package:mobile/services/token_service.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -66,7 +67,8 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
       final result = await authService.login(name, password);
       if (result['success']) {
         String token = result['token'];
-
+        await TokenService.saveToken(token);
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(
             'Login successful!',

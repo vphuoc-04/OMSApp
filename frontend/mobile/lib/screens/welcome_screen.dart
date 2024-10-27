@@ -1,11 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 // Font
 import 'package:google_fonts/google_fonts.dart';
 
-// Screen
-import 'package:mobile/screens/login_screen.dart';
-
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
+  const WelcomeScreen({super.key});
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+  Future<void> _navigateBasedOnToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    
+    if (token != null && token.isNotEmpty) {
+      Navigator.pushReplacementNamed(context, '/home'); 
+    } 
+    else {
+      Navigator.pushReplacementNamed(context, '/login'); 
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -36,12 +55,7 @@ class WelcomeScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 InkWell(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (contex) => LoginScreen()
-                      )
-                    );
+                    _navigateBasedOnToken();
                   },
                   child: Ink(
                     child: Container(
