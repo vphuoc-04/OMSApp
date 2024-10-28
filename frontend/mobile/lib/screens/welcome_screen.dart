@@ -6,25 +6,30 @@ import 'package:google_fonts/google_fonts.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
+
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
+
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
   }
-  Future<void> _navigateBasedOnToken() async {
+
+Future<void> _navigateBasedOnToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
-    
-    if (token != null && token.isNotEmpty) {
-      Navigator.pushReplacementNamed(context, '/home'); 
+    int? userId = prefs.getInt('user_id');
+
+    if (token != null && userId != null) {
+      Navigator.pushReplacementNamed(context, '/home');
     } 
     else {
-      Navigator.pushReplacementNamed(context, '/login'); 
+      Navigator.pushReplacementNamed(context, '/login');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Material(

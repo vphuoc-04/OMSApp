@@ -9,8 +9,9 @@ import 'package:mobile/components/login/input_login.dart';
 import 'package:mobile/services/auth_service.dart';
 import 'package:mobile/services/token_service.dart';
 
+// Screens
+import 'package:mobile/screens/layout_screen.dart';
 class LoginScreen extends StatefulWidget {
-
   @override
   _LoginState createState() => _LoginState();
 }
@@ -18,14 +19,14 @@ class LoginScreen extends StatefulWidget {
 class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin {
   final nameController = TextEditingController();
   final passwordController = TextEditingController();
-
   final AuthService authService = AuthService();
 
   bool keyboardVisible = false;
-
   late AnimationController _controller;
   late Animation<double> _animation;
-  
+
+  int? userId;
+
   @override
   void initState() {
     super.initState();
@@ -48,65 +49,62 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
 
     if (name.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: 
-          Text('Username or password is required!',
-          textAlign: TextAlign.center,
-        ),
+        SnackBar(
+          content: Text(
+            'Username or password is required!',
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Color.fromARGB(255, 141, 37, 37),
           duration: Duration(milliseconds: 1000),
         ),
       );
-
       Future.delayed(Duration(milliseconds: 1000), () {
         ScaffoldMessenger.of(context).clearSnackBars();
       });
-
       return;
     }
+
     try {
       final result = await authService.login(name, password);
+
       if (result['success']) {
         String token = result['token'];
         await TokenService.saveToken(token);
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(
-            'Login successful!',
-            textAlign: TextAlign.center,
-          ),
+          SnackBar(
+            content: Text(
+              'Login successful!',
+              textAlign: TextAlign.center,
+            ),
             backgroundColor: Color.fromRGBO(67, 169, 162, 1),
             duration: Duration(milliseconds: 1000),
           ),
         );
-        print('Login successful: ${result['token']}');
-        Future.delayed(Duration.zero, () {
-          Navigator.pushReplacementNamed(context, '/home');
-        });
 
-        Future.delayed(Duration(milliseconds: 1000), () {
-          ScaffoldMessenger.of(context).clearSnackBars();
-        });
-
-      }
-      else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(
-            'Incorrect username or password!',
-            textAlign: TextAlign.center,
-          ),
-            backgroundColor: Color.fromARGB(255, 141, 37, 37),
-            duration: Duration(milliseconds: 1000),
-          ),
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LayoutScreen(id: userId)),
         );
 
+        print('Login successful: ${result['token']}');
+      } 
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Incorrect username or password!',
+              textAlign: TextAlign.center,
+            ),
+            backgroundColor: Color.fromARGB(255, 141, 37, 37),
+          ),
+        );
         Future.delayed(Duration(milliseconds: 1000), () {
           ScaffoldMessenger.of(context).clearSnackBars();
         });
-
         print('Login failed: ${result['message']}');
       }
-    }
-
+    } 
     catch (error) {
       print('Error occurred: $error');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -118,12 +116,14 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     keyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
     if (keyboardVisible) {
       _controller.forward();
     } 
     else {
       _controller.reverse();
     }
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       resizeToAvoidBottomInset: false,
@@ -132,8 +132,7 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
           child: Center(
             child: Column(
               children: [
-                
-                // Logo 
+                // Logo
                 AnimatedPadding(
                   padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: keyboardVisible ? 18 : 23),
                   duration: const Duration(milliseconds: 200),
@@ -142,7 +141,7 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
                     height: 100,
                   ),
                 ),
-                
+
                 // Username input
                 AnimatedPadding(
                   padding: EdgeInsets.only(top: keyboardVisible ? 0 : 10),
@@ -154,7 +153,7 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
                   ),
                 ),
 
-                // Password input 
+                // Password input
                 AnimatedPadding(
                   padding: EdgeInsets.only(top: keyboardVisible ? 12 : 18),
                   duration: const Duration(milliseconds: 200),
@@ -174,7 +173,7 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
                   ),
                 ),
 
-                // Forgot password 
+                // Forgot password
                 AnimatedPadding(
                   padding: EdgeInsets.only(top: keyboardVisible ? 12 : 18),
                   duration: const Duration(milliseconds: 200),
@@ -188,7 +187,7 @@ class _LoginState extends State<LoginScreen> with SingleTickerProviderStateMixin
               ],
             ),
           ),
-        )
+        ),
       ),
     );
   }

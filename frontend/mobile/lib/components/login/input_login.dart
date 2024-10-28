@@ -4,7 +4,7 @@ class InputLogin extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
-  
+
   const InputLogin({
     Key? key,
     required this.controller,
@@ -14,6 +14,7 @@ class InputLogin extends StatefulWidget {
 
   @override
   _InputLoginState createState() => _InputLoginState();
+
 }
 
 class _InputLoginState extends State<InputLogin> {
@@ -24,6 +25,7 @@ class _InputLoginState extends State<InputLogin> {
     super.initState();
     _isObscured = widget.obscureText;
   }
+
   void _toggleObscureText() {
     setState(() {
       _isObscured =! _isObscured;
