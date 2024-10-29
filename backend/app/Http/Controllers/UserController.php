@@ -79,4 +79,51 @@ class UserController extends Controller
             'message' => 'No file uploaded'
         ], 400);
     }
+
+    // Delete user avatar
+    public function deleteAvatar(Request $request, $id) {
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        $defaultAvatar = env('SEEDER_IMG');
+
+        if ($user->img) {
+            $imgPath = str_replace('storage/', '', $user->img);
+
+            if (Storage::disk('public')->exists($imgPath)) {
+                if (Storage::disk('public')->delete($imgPath)) {
+                    $user->img = $defaultAvatar;
+                    $user->save();
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Avatar deleted successfully, reset to default.',
+                        'img' => $defaultAvatar
+                    ], 200);
+                }
+                else {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Failed to delete image from storage.'
+                    ], 500);
+                }
+            }
+            else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Image does not exist in storage.'
+                ], 404);
+            }
+        }
+
+        return response()->json([
+            'status' => 'info',
+            'message' => 'No avatar to delete, reset to default.'
+        ], 200);
+    }
 }

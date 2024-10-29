@@ -22,6 +22,7 @@ class AvatarProfile extends StatefulWidget {
 class _AvatarProfileState extends State<AvatarProfile> {
   String? avatarUrl;
   bool isLoading = false;
+  bool isConfirmDelete = false;
 
   final UserService userService = UserService();
 
@@ -40,7 +41,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
         sourcePath: pickedFile.path,
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Cropper',
+            toolbarTitle: 'Crop Image',
             toolbarColor: Colors.deepOrange,
             toolbarWidgetColor: Colors.white,
             aspectRatioPresets: [
@@ -50,7 +51,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
             ],
           ),
           IOSUiSettings(
-            title: 'Cropper',
+            title: 'Crop Image',
             aspectRatioPresets: [
               CropAspectRatioPreset.original,
               CropAspectRatioPreset.square,
@@ -78,6 +79,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
                 avatarUrl = response['img']; 
                 widget.user.img = response['img']; 
               });
+              print("Avatar updated successfully: $avatarUrl");
             } 
             else {
               print("Failed to update avatar: ${response['message']}");
@@ -104,6 +106,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
       context: context,
       builder: (context) {
         return Dialog(
+          backgroundColor: Color.fromRGBO(0, 0, 0, 1),
           child: Container(
             width: 800,
             height: 500,
@@ -114,30 +117,95 @@ class _AvatarProfileState extends State<AvatarProfile> {
     );
   }
 
+  Future<void> _deleteAvatar() async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      final response = await userService.deleteAvatar(widget.user.id);
+
+      if (response is Map<String, dynamic> && response.containsKey('status')) {
+        if (response['status'] == 'success') {
+          setState(() {
+            avatarUrl = defaultAvatarUrl; 
+            widget.user.img = defaultAvatarUrl; 
+          });
+          print("Avatar deleted successfully.");
+        } 
+        else {
+          print("Failed to delete avatar: ${response['message']}");
+        }
+      } 
+      else {
+        print("Unexpected response format: $response");
+      }
+    } 
+    catch (err) {
+      print("Failed to delete avatar: $err");
+    } 
+    finally {
+      setState(() {
+        isLoading = false;
+        isConfirmDelete = false; 
+      });
+    }
+  }
+
   void _showBottomSheet() {
     showModalBottomSheet(
-      backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-      context: context, 
+      backgroundColor: Colors.white,
+      context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
       ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
-          height: avatarUrl == defaultAvatarUrl ? 70 : 165,
-          width: MediaQuery.of(context).size.width,
-          child: SingleChildScrollView( 
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start, 
-              children: [
-                SizedBox(height: 15,),
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+          height: isConfirmDelete ? 120 : (avatarUrl == defaultAvatarUrl ? 68 : 165),
+          child: ListView( // Thay đổi thành ListView
+            children: [
+              if (isConfirmDelete) ...[
+                Text(
+                  'Are you sure to delete this avatar?',
+                  style: TextStyle(fontSize: 18),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isConfirmDelete = false;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context); // Đóng BottomSheet
+                        _deleteAvatar(); // Gọi hàm xóa avatar
+                      },
+                      child: Text(
+                        'Yes',
+                        style: TextStyle(color: Colors.red, fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ] else ...[
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
                     _updateAvatar();
                   },
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
                         padding: EdgeInsets.all(8),
@@ -151,19 +219,18 @@ class _AvatarProfileState extends State<AvatarProfile> {
                       Text(
                         'Choose image profile from device',
                         style: TextStyle(fontSize: 17),
-                      )
+                      ),
                     ],
                   ),
                 ),
                 SizedBox(height: 10),
-                if (avatarUrl != null && avatarUrl != defaultAvatarUrl) 
+                if (avatarUrl != null && avatarUrl != defaultAvatarUrl)
                   InkWell(
                     onTap: () {
                       Navigator.pop(context);
-                      _showAvatarView(); 
+                      _showAvatarView();
                     },
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Container(
                           padding: EdgeInsets.all(8),
@@ -177,13 +244,40 @@ class _AvatarProfileState extends State<AvatarProfile> {
                         Text(
                           'View avatar',
                           style: TextStyle(fontSize: 17),
-                        )
+                        ),
                       ],
                     ),
                   ),
                 SizedBox(height: 10),
+                if (avatarUrl != null && avatarUrl != defaultAvatarUrl)
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        isConfirmDelete = true;
+                      });
+                      Navigator.pop(context);
+                      _showBottomSheet(); 
+                    },
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey[300],
+                          ),
+                          child: Icon(Icons.delete, size: 20),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'Delete avatar',
+                          style: TextStyle(fontSize: 17),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
-            ),
+            ],
           ),
         );
       },
@@ -194,13 +288,23 @@ class _AvatarProfileState extends State<AvatarProfile> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _showBottomSheet,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(50),
+      child: Container(
+        width: 100, 
+        height: 100, 
+        decoration: BoxDecoration(
+          shape: BoxShape.circle, 
+          image: DecorationImage(
+            image: NetworkImage(
+              avatarUrl != null && avatarUrl != defaultAvatarUrl
+                  ? avatarUrl!
+                  : defaultAvatarUrl,
+            ),
+            fit: BoxFit.cover, 
+          ),
+        ),
         child: isLoading
             ? CircularProgressIndicator()
-            : (avatarUrl != null
-                ? Image.network(avatarUrl!, width: 100, height: 100, fit: BoxFit.cover)
-                : Image.network("https://imgur.com/AhaZ0qB.jpg", width: 100, height: 100)),
+            : null, 
       ),
     );
   }

@@ -38,4 +38,19 @@ class UserService {
       throw Exception('Failed to update avatar! Status code: ${response.statusCode}');
     }
   }
+
+    // Delete avatar
+  Future<Map<String, dynamic>> deleteAvatar(int id) async {
+    final response = await apiService.delete('user/$id/delete-avatar');
+
+    if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print("Avatar deleted successfully: $data");
+        
+        return data; 
+    } 
+    else {
+        throw Exception('Failed to delete avatar! Status code: ${response.statusCode}');
+    }
+  }
 }
