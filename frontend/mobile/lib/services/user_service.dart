@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:mobile/models/user.dart';
+import 'dart:io';
 
 // Service
 import 'package:mobile/services/api_service.dart';
@@ -18,6 +19,23 @@ class UserService {
     } 
     else {
       throw Exception('Failed to load user data!');
+    }
+  }
+
+  // Update user avatar
+  Future<Map<String, dynamic>> updateAvatar(int id, File avatarFile) async {
+    final response = await apiService.postMultipart('user/$id/upload-avatar', avatarFile);
+
+    if (response.statusCode == 200) {
+      final responseBody = await response.stream.bytesToString();
+      final data = json.decode(responseBody);
+      
+      print("Avatar updated successfully: $data");
+      
+      return data; 
+    } 
+    else {
+      throw Exception('Failed to update avatar! Status code: ${response.statusCode}');
     }
   }
 }

@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     if (userData != null)
                       Column(
                         children: [
-                          AvatarProfile(avatarUrl: userData!.img ?? ''),
+                          AvatarProfile(user: userData!),
                           SizedBox(height: 18),
                           DataProfile(userData: userData!),
                         ],

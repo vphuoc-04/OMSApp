@@ -1,6 +1,6 @@
 class User {
-  final int? id;
-  final String? img; 
+  final int id;
+  String? img; 
   final String? firstname; 
   final String? lastname; 
   final String? name; 
