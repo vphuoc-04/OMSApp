@@ -71,7 +71,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
           });
 
           final response = await userService.updateAvatar(widget.user.id, avatarFile);
-          
+
           if (response is Map<String, dynamic> && response.containsKey('status')) {
             if (response['status'] == 'success') {
               setState(() {
@@ -99,49 +99,94 @@ class _AvatarProfileState extends State<AvatarProfile> {
     }
   }
 
+  void _showAvatarView() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Container(
+            width: 800,
+            height: 500,
+            child: Image.network(avatarUrl!),
+          ),
+        );
+      },
+    );
+  }
+
   void _showBottomSheet() {
     showModalBottomSheet(
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
       context: context, 
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10))
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
       ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.all(10),
-          height: 70,
+          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 5),
+          height: avatarUrl == defaultAvatarUrl ? 70 : 165,
           width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                  _updateAvatar(); 
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[300]
+          child: SingleChildScrollView( 
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start, 
+              children: [
+                SizedBox(height: 15,),
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                    _updateAvatar();
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[300],
+                        ),
+                        child: Icon(Icons.image, size: 20),
                       ),
-                      child: Icon(Icons.image, size: 20),
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Choose image profile from device',
-                      style: TextStyle(fontSize: 17),
-                    )
-                  ],
+                      SizedBox(width: 10),
+                      Text(
+                        'Choose image profile from device',
+                        style: TextStyle(fontSize: 17),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                SizedBox(height: 10),
+                if (avatarUrl != null && avatarUrl != defaultAvatarUrl) 
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                      _showAvatarView(); 
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey[300],
+                          ),
+                          child: Icon(Icons.remove_red_eye, size: 20),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'View avatar',
+                          style: TextStyle(fontSize: 17),
+                        )
+                      ],
+                    ),
+                  ),
+                SizedBox(height: 10),
+              ],
+            ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -152,7 +197,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child: isLoading
-            ? CircularProgressIndicator() 
+            ? CircularProgressIndicator()
             : (avatarUrl != null
                 ? Image.network(avatarUrl!, width: 100, height: 100, fit: BoxFit.cover)
                 : Image.network("https://imgur.com/AhaZ0qB.jpg", width: 100, height: 100)),
