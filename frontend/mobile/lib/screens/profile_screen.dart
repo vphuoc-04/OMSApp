@@ -64,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Center(
           child: isLoading
-              ? CircularProgressIndicator()
+              ? CircularProgressIndicator(color: Color.fromRGBO(67, 169, 162, 1),)
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

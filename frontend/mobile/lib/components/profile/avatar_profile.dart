@@ -42,8 +42,9 @@ class _AvatarProfileState extends State<AvatarProfile> {
         uiSettings: [
           AndroidUiSettings(
             toolbarTitle: 'Crop Image',
-            toolbarColor: Colors.deepOrange,
+            toolbarColor: Color.fromRGBO(67, 169, 162, 1),
             toolbarWidgetColor: Colors.white,
+            activeControlsWidgetColor: Color.fromRGBO(67, 169, 162, 1),
             aspectRatioPresets: [
               CropAspectRatioPreset.original,
               CropAspectRatioPreset.square,
@@ -163,7 +164,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
           height: isConfirmDelete ? 120 : (avatarUrl == defaultAvatarUrl ? 68 : 165),
-          child: ListView( // Thay đổi thành ListView
+          child: ListView( 
             children: [
               if (isConfirmDelete) ...[
                 Text(
@@ -189,8 +190,8 @@ class _AvatarProfileState extends State<AvatarProfile> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pop(context); // Đóng BottomSheet
-                        _deleteAvatar(); // Gọi hàm xóa avatar
+                        Navigator.pop(context); 
+                        _deleteAvatar(); 
                       },
                       child: Text(
                         'Yes',
@@ -303,8 +304,12 @@ class _AvatarProfileState extends State<AvatarProfile> {
           ),
         ),
         child: isLoading
-            ? CircularProgressIndicator()
-            : null, 
+            ? Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(67, 169, 162, 1)), // Thay đổi màu sắc của loader
+              ),
+            )
+            : null,
       ),
     );
   }
