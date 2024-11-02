@@ -26,8 +26,20 @@ class ProductData extends StatelessWidget {
                 Text('Mô tả: ${product.description}'),
                 Text('Số lượng: ${product.quantity}'),
                 Text('Trạng thái: ${product.status}'),
-                if (product.img != null && product.img!.isNotEmpty)
-                  Image.network(product.img!, height: 100, fit: BoxFit.cover),
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    image: product.img != null && product.img!.isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(product.img!),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    color: Colors.grey[200], 
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
               ],
             ),
             isThreeLine: true,

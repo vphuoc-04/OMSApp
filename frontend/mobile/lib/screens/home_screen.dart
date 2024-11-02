@@ -22,17 +22,56 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Product> products = [];
   bool isLoading = true;
 
+  final List<Map<String, dynamic>> categories = [
+    {'id': 0, 'icon': Icons.flatware, 'label': 'All'},
+    {'id': 1, 'icon': Icons.ramen_dining, 'label': 'Noodle'},
+    {'id': 2, 'icon': Icons.outdoor_grill, 'label': 'Grill'},
+    {'id': 3, 'icon': Icons.fastfood, 'label': 'Fast'},
+    {'id': 4, 'icon': Icons.rice_bowl, 'label': 'Rice'},
+    {'id': 5, 'icon': Icons.local_cafe, 'label': 'Drink'},
+  ];
+
   @override
   void initState() {
     super.initState();
     fetchAllProducts();
   }
 
+  void onCategorySelected(int index) {
+    final categoryId = categories[index]['id'];
+    
+    setState(() {
+      isLoading = true;
+    });
+
+    if (categoryId == 0) {
+      fetchAllProducts();
+    } 
+    else {
+      fetchProductsByCategory(categoryId);
+    }
+  }
+
   Future<void> fetchAllProducts() async {
     try {
       final productList = await productService.getAllProduct();
       setState(() {
-        products = productList; 
+        products = productList;
+        isLoading = false;
+      });
+    } catch (err) {
+      print(err);
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchProductsByCategory(int categoryId) async {
+    try {
+      final productList = await productService.getProductsByCategory(categoryId);
+      setState(() {
+        products = productList;
         isLoading = false;
       });
     } 
@@ -44,23 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void onCategorySelected(int index) {
-    if (index == 0) { 
-      fetchAllProducts(); 
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> categories = [
-      {'icon': Icons.flatware, 'label': 'All'},
-      {'icon': Icons.ramen_dining, 'label': 'Noddle'},
-      {'icon': Icons.outdoor_grill, 'label': 'Grill'},
-      {'icon': Icons.fastfood, 'label': 'Fast'},
-      {'icon': Icons.rice_bowl, 'label': 'Rice'},
-      {'icon': Icons.local_cafe, 'label': 'Drink'},
-    ];
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Center(

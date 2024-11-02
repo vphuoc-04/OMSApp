@@ -21,3 +21,4 @@ Route::delete('/user/{id}/delete-avatar', [UserController::class, 'deleteAvatar'
 
 // Prodcut api
 Route::get('/product/all', [ProductController::class,  'getAllProduct']);
+Route::get('/product/category/{categoryId}', [ProductController::class, 'getProductsByCategory']);

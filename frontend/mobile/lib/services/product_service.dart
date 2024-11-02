@@ -22,4 +22,16 @@ class ProductService {
       throw Exception('Failed to load products');
     }
   }
+
+  Future<List<Product>> getProductsByCategory(int categoryId) async {
+    final response = await apiService.get('product/category/${categoryId}');
+
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+      return data.map((json) => Product.fromJson(json)).toList();
+    } 
+    else {
+      throw Exception('Failed to load products');
+    }
+  }
 }
