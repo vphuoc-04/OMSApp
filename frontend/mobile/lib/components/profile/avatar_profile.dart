@@ -306,7 +306,7 @@ class _AvatarProfileState extends State<AvatarProfile> {
         child: isLoading
             ? Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(67, 169, 162, 1)), // Thay đổi màu sắc của loader
+                valueColor: AlwaysStoppedAnimation<Color>(Color.fromRGBO(67, 169, 162, 1)),
               ),
             )
             : null,

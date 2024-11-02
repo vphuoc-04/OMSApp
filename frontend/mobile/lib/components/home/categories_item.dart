@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class CategoriesItem extends StatefulWidget {
   final List<Map<String, dynamic>> items;
+  final Function(int) onCategorySelected;
 
-  CategoriesItem({required this.items});
+  CategoriesItem({required this.items, required this.onCategorySelected});
 
   @override
   _CategoriesItemState createState() => _CategoriesItemState();
@@ -26,7 +27,7 @@ class _CategoriesItemState extends State<CategoriesItem> {
               setState(() {
                 selectedIndex = index;
               });
-              print("Selected item: ${item['label']}");
+              widget.onCategorySelected(index);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),

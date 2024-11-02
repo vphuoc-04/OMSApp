@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Product;
+use App\Models\Category;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
@@ -27,6 +29,14 @@ class DatabaseSeeder extends Seeder
             'phone' => env('SEEDER_PHONE'),
             'job_title' => env('SEEDER_JOB_TITLE'),
             'password' => Hash::make(env('SEEDER_PASSWORD')),
+        ]);
+
+        // Category
+        $categories = Category::factory()->count(5)->create();
+
+        // Products
+        Product::factory()->count(10)->create([
+            'category_id' => $categories->random()->id,
         ]);
     }
 }
