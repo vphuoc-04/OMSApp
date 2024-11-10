@@ -19,6 +19,7 @@ Route::get('/user/{id}', [UserController::class, 'getUserById']);
 Route::post('/user/{id}/upload-avatar', [UserController::class, 'updateAvatar']);
 Route::delete('/user/{id}/delete-avatar', [UserController::class, 'deleteAvatar']);
 
-// Prodcut api
+// Product api
 Route::get('/product/all', [ProductController::class,  'getAllProduct']);
 Route::get('/product/category/{categoryId}', [ProductController::class, 'getProductsByCategory']);
+Route::get('/product/search', [ProductController::class, 'searchProduct']);

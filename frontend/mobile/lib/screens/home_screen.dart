@@ -15,12 +15,13 @@ class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
   final ProductService productService = ProductService();
   List<Product> products = [];
   bool isLoading = true;
+
+  int selectedCategoryId = 0;
 
   final List<Map<String, dynamic>> categories = [
     {'id': 0, 'icon': Icons.flatware, 'label': 'All'},
@@ -39,16 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void onCategorySelected(int index) {
     final categoryId = categories[index]['id'];
-    
     setState(() {
+      selectedCategoryId = categoryId;
       isLoading = true;
     });
 
     if (categoryId == 0) {
-      fetchAllProducts();
+      fetchAllProducts(); 
     } 
     else {
-      fetchProductsByCategory(categoryId);
+      fetchProductsByCategory(categoryId); 
     }
   }
 
@@ -83,6 +84,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void updateSearchResults(List<Product> results) {
+    setState(() {
+      products = results;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,6 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
               controller: searchController,
               hintText: 'Search product...',
               obscureText: false,
+              onSearchResults: updateSearchResults,
+              selectedCategoryId: selectedCategoryId,
             ),
             CategoriesItem(
               items: categories,
