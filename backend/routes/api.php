@@ -11,6 +11,9 @@ use App\Http\Controllers\UserController;
 // Product
 use App\Http\Controllers\ProductController;
 
+// Cart
+use App\Http\Controllers\CartController;
+
 // Auth api
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -23,3 +26,7 @@ Route::delete('/user/{id}/delete-avatar', [UserController::class, 'deleteAvatar'
 Route::get('/product/all', [ProductController::class,  'getAllProduct']);
 Route::get('/product/category/{categoryId}', [ProductController::class, 'getProductsByCategory']);
 Route::get('/product/search', [ProductController::class, 'searchProduct']);
+
+// Cart api
+Route::post('/cart/add', [CartController::class, 'addToCart']);
+

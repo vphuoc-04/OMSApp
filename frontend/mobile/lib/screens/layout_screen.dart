@@ -6,6 +6,7 @@ import 'package:mobile/components/layout/custom_navigation_bar.dart';
 
 // Screens
 import 'package:mobile/screens/home_screen.dart';
+import 'package:mobile/screens/order_screen.dart';
 import 'package:mobile/screens/profile_screen.dart';
 
 class LayoutScreen extends StatefulWidget {
@@ -25,6 +26,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
     super.initState();
     _screens = <Widget>[
       HomeScreen(),
+      OrderScreen(),
       ProfileScreen(),  
     ];
   }

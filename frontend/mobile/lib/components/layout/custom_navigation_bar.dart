@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // Icon
@@ -45,8 +46,18 @@ class CustomNavigationBar extends StatelessWidget {
               ),
               NavigationDestination(
                 icon: Icon(
-                  selectedIndex == 1 ? IconlyBold.profile : IconlyLight.profile,
+                  selectedIndex == 1 ? CupertinoIcons.cart : CupertinoIcons.cart,
                   color: selectedIndex == 1
+                      ? const Color.fromRGBO(67, 169, 162, 1)
+                      : Colors.grey,
+                  size: iconSize, 
+                ),
+                label: '',
+              ),
+              NavigationDestination(
+                icon: Icon(
+                  selectedIndex == 2 ? IconlyBold.profile : IconlyLight.profile,
+                  color: selectedIndex == 2
                       ? const Color.fromRGBO(67, 169, 162, 1)
                       : Colors.grey,
                   size: iconSize,

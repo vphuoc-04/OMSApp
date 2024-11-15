@@ -5,7 +5,7 @@ import 'dart:io';
 // Services
 import 'package:mobile/services/token_service.dart';
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8000/api';
+  static const String baseUrl = 'http://127.0.0.1:8000/api';
   static String? token;
 
   // Run token when run app

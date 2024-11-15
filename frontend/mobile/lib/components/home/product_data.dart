@@ -75,18 +75,18 @@ class ProductData extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      product.description ?? '',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  //   child: Text(
+                  //     product.description ?? '',
+                  //     style: const TextStyle(
+                  //       fontSize: 14,
+                  //       color: Colors.grey,
+                  //     ),
+                  //     maxLines: 2,
+                  //     overflow: TextOverflow.ellipsis,
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Row(
