@@ -50,7 +50,6 @@ class CartService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token'); 
 
-    // Kiểm tra nếu token là null thì trả về danh sách rỗng
     if (token == null) {
       return [];
     }
@@ -66,13 +65,14 @@ class CartService {
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         
-        // Chuyển đổi dữ liệu thành danh sách các đối tượng Cart
         return data.map((item) => Cart.fromJson(item)).toList();
-      } else {
+      } 
+      else {
         print('Error: ${response.body}');
         return [];
       }
-    } catch (e) {
+    } 
+    catch (e) {
       print('Error while fetching cart items: $e');
       return [];
     }
