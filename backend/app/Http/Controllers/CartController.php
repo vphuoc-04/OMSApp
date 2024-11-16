@@ -11,46 +11,22 @@ class CartController extends Controller
 {
     // Add to cart
     public function addToCart(Request $request) {
-        // Xác thực dữ liệu đầu vào
-        $validated = $request->validate([
-            'product_id' => 'required|exists:products,id',   // Kiểm tra nếu sản phẩm tồn tại
-            'name' => 'required|string|max:255',               // Kiểm tra tên sản phẩm
-            'price' => 'required|numeric',                     // Kiểm tra giá trị là số
-            'quantity' => 'required|integer|min:1',            // Kiểm tra số lượng sản phẩm phải là số và >= 1
-        ]);
-
-        // Kiểm tra xác thực người dùng
         $user = Auth::user();
 
-        // Nếu không có người dùng đăng nhập
         if (!$user) {
             return response()->json(['message' => 'User not logged in'], 401);
         }
 
-        // Kiểm tra xem sản phẩm đã có trong giỏ hàng chưa
-        $existingCartItem = Cart::where('user_id', $user->id)
-                                ->where('product_id', $request->product_id)
-                                ->first();
-
-        // Nếu sản phẩm đã có trong giỏ hàng
-        if ($existingCartItem) {
-            // Cập nhật số lượng sản phẩm
-            $existingCartItem->quantity += $request->quantity;
-            $existingCartItem->save();
-
-            return response()->json([
-                'message' => 'Product quantity updated in cart',
-                'cartItem' => $existingCartItem
-            ], 200);
+        if (empty($request->user_id)) {
+            return response()->json(['message' => 'User ID is missing'], 400);
         }
 
-        // Thêm sản phẩm mới vào giỏ hàng
         $cartItem = Cart::create([
             'user_id' => $user->id,
             'product_id' => $request->product_id,
             'name' => $request->name,
             'price' => $request->price,
-            'quantity' => $request->quantity,
+            'img' => $request->img,
             'invoice_date' => now(),
         ]);
 
@@ -60,4 +36,10 @@ class CartController extends Controller
         ], 201);
     }
 
+    // Get data cart
+    public function getDataCart(Request $request) {
+        $cart = Cart::all();
+
+        return response()->json($cart);
+    }
 }

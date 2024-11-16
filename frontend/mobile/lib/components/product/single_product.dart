@@ -24,16 +24,15 @@ class _SingleProductState extends State<SingleProduct> {
   @override
   void initState() {
     super.initState();
-    _getUserData(); // Gọi phương thức lấy thông tin người dùng khi màn hình được khởi tạo
+    _getUserData(); 
   }
 
-  // Lấy thông tin người dùng từ SharedPreferences
   Future<void> _getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    token = prefs.getString('token');  // Lấy token
-    userId = prefs.getInt('user_id');   // Lấy user_id
+    token = prefs.getString('token');  
+    userId = prefs.getInt('user_id');  
 
-    setState(() {});  // Cập nhật lại UI khi thông tin người dùng được tải xong
+    setState(() {}); 
   }
 
   @override
@@ -85,14 +84,19 @@ class _SingleProductState extends State<SingleProduct> {
                   ),
                   InkWell(
                     onTap: () async {
+                      if (token == null || userId == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Please log in to add products to the cart')),
+                        );
+                        return;
+                      }
+
                       try {
-                        await cartService.addToCart(widget.product.id, 1, widget.product.name, widget.product.price);
+                        await cartService.addToCart(widget.product.id, 1, widget.product.name, widget.product.price, widget.product.img);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Product added to cart!')),
                         );
-                      } 
-                      catch (e) {
-                        print("Error while adding to cart: $e");
+                      } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Error: ${e.toString()}')),
                         );

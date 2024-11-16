@@ -2,6 +2,7 @@ class Cart {
   final int productId;
   final String name;
   final double price;
+  final String img;
   final int quantity;
   final double totalPrice;
   final DateTime invoiceDate;
@@ -10,6 +11,7 @@ class Cart {
     required this.productId,
     required this.name,
     required this.price,
+    required this.img,
     required this.quantity,
     required this.totalPrice,
     required this.invoiceDate,
@@ -17,12 +19,13 @@ class Cart {
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
-      productId: json['product_id'],
-      name: json['name'],
-      price: double.parse(json['price'].toString()),
-      quantity: json['quantity'],
-      totalPrice: double.parse(json['total_price'].toString()),
-      invoiceDate: DateTime.parse(json['invoice_date']),
+      productId: json['product_id'] ?? 0, 
+      name: json['name'] ?? '', 
+      price: json['price'] != null ? double.parse(json['price'].toString()) : 0.0, 
+      quantity: json['quantity'] ?? 0, 
+      img: json['img'] ?? '', 
+      totalPrice: json['total_price'] != null ? double.parse(json['total_price'].toString()) : 0.0, 
+      invoiceDate: json['invoice_date'] != null ? DateTime.parse(json['invoice_date']) : DateTime.now(),
     );
   }
 

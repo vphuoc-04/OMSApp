@@ -28,5 +28,9 @@ Route::get('/product/category/{categoryId}', [ProductController::class, 'getProd
 Route::get('/product/search', [ProductController::class, 'searchProduct']);
 
 // Cart api
-Route::post('/cart/add', [CartController::class, 'addToCart']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('cart/add', [CartController::class, 'addToCart']);
+});
+Route::get('cart/data', [CartController::class, 'getDataCart']);
+
 

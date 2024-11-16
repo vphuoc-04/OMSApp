@@ -5,7 +5,7 @@ import 'dart:io';
 // Services
 import 'package:mobile/services/token_service.dart';
 class ApiService {
-  static const String baseUrl = 'http://127.0.0.1:8000/api';
+  static const String baseUrl = 'http://10.0.2.2:8000/api';
   static String? token;
 
   // Run token when run app
@@ -14,13 +14,17 @@ class ApiService {
   }
 
   // Post method
-  Future<http.Response> post(String endpoint, Map<String, dynamic> body) async {
+  Future<http.Response> post(
+    String endpoint, 
+    Map<String, dynamic> body, 
+    {Map<String, String>? extraHeaders}) async {
     final url = Uri.parse('$baseUrl/$endpoint');
     return await http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
         if (token != null) 'Authorization': 'Bearer $token',
+        if (extraHeaders != null) ...extraHeaders, 
       },
       body: json.encode(body),
     );

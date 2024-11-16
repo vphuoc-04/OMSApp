@@ -4,7 +4,7 @@ class Product {
   final String productCode;
   final String name;
   final String? description;
-  final String? img;
+  final String img;
   final int quantity;
   final double price;
   final double? originalPrice;
@@ -25,7 +25,7 @@ class Product {
     required this.productCode,
     required this.name,
     this.description,
-    this.img,
+    required this.img,
     required this.quantity,
     required this.price,
     this.originalPrice,
