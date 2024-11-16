@@ -1,4 +1,5 @@
 class Cart {
+  final int id;
   final int productId;
   final String name;
   final double price;
@@ -8,6 +9,7 @@ class Cart {
   final DateTime invoiceDate;
 
   Cart({
+    required this.id,
     required this.productId,
     required this.name,
     required this.price,
@@ -19,6 +21,7 @@ class Cart {
 
   factory Cart.fromJson(Map<String, dynamic> json) {
     return Cart(
+      id: json['id'],
       productId: json['product_id'] ?? 0, 
       name: json['name'] ?? '', 
       price: json['price'] != null ? double.parse(json['price'].toString()) : 0.0, 
@@ -31,6 +34,7 @@ class Cart {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'product_id': productId,
       'name': name,
       'price': price,

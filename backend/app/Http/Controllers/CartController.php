@@ -42,4 +42,29 @@ class CartController extends Controller
 
         return response()->json($cart);
     }
+
+    // Delete data cart
+    public function deleteDataCart (Request $request, $id) {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not logged in'], 401);
+        }
+
+        $cartItem = Cart::where('id', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$cartItem) {
+            return response()->json(['message' => 'Cart item not found'], 404);
+        }
+
+        try {
+            $cartItem->delete();
+            return response()->json(['message' => 'Cart item deleted successfully'], 200);
+        }
+        catch (\Exception $e) {
+            return response()->json(['message' => 'Fail to delete cart item', 'error' => $e->getMessage()], 500);
+        }
+    }
 }

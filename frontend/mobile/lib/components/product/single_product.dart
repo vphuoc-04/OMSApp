@@ -93,10 +93,9 @@ class _SingleProductState extends State<SingleProduct> {
 
                       try {
                         await cartService.addToCart(widget.product.id, 1, widget.product.name, widget.product.price, widget.product.img);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Product added to cart!')),
-                        );
-                      } catch (e) {
+                        print('Product added to cart!');
+                      } 
+                      catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Error: ${e.toString()}')),
                         );

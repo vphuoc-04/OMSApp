@@ -8,9 +8,10 @@ import 'package:mobile/services/api_service.dart';
 import 'package:mobile/models/cart.dart';
 
 class CartService {
+  final ApiService apiService = ApiService();
+
   // Add to cart
   Future<void> addToCart(int productId, int quantity, String name, double price, String img) async {
-    final ApiService apiService = ApiService();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     int? userId = prefs.getInt('user_id');
@@ -45,8 +46,8 @@ class CartService {
     }
   }
 
+  // Get data cart
   Future<List<Cart>> getDataCart() async {
-    final ApiService apiService = ApiService();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token'); 
 
@@ -75,6 +76,35 @@ class CartService {
     catch (e) {
       print('Error while fetching cart items: $e');
       return [];
+    }
+  }
+
+  // Delete data cart
+  Future<bool> removeCartItem(int cartItemId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    int? userId = prefs.getInt('user_id');
+
+    if (token == null || userId == null) {
+      print('User not logged in!');
+      return false;
+    }
+
+    try {
+      final response = await apiService.delete('cart/delete/$cartItemId'); 
+
+      if (response.statusCode == 200) {
+        print('Cart item deleted successfully');
+        return true;
+      } 
+      else {
+        print('Failed to delete cart item: ${response.body}');
+        return false;
+      }
+    } 
+    catch (e) {
+      print('Error while deleting cart item: $e');
+      return false;
     }
   }
 }

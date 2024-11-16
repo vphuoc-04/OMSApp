@@ -60,6 +60,7 @@ class ApiService {
   // Delete method
   Future<http.Response> delete(String endpoint) async {
     final url = Uri.parse('$baseUrl/$endpoint');
+    final token = await TokenService.loadToken(); 
     return await http.delete(
       url,
       headers: {

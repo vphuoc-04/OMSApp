@@ -30,6 +30,7 @@ Route::get('/product/search', [ProductController::class, 'searchProduct']);
 // Cart api
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('cart/add', [CartController::class, 'addToCart']);
+    Route::delete('cart/delete/{id}', [CartController::class, 'deleteDataCart']);
 });
 Route::get('cart/data', [CartController::class, 'getDataCart']);
 

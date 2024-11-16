@@ -13,6 +13,7 @@ class OrderProduct extends StatefulWidget {
 }
 
 class _OrderProductState extends State<OrderProduct> {
+  final CartService cartService = CartService();
   List<Cart> cartItems = [];
 
   @override
@@ -22,11 +23,29 @@ class _OrderProductState extends State<OrderProduct> {
   }
 
   Future<void> _fetchCartItems() async {
-    CartService cartService = CartService();
     var items = await cartService.getDataCart(); 
     setState(() {
       cartItems = items;
     });
+  }
+
+  Future<void> _removeCartItem(int cartItemId) async {
+    bool success = await cartService.removeCartItem(cartItemId);
+
+    if (success) {
+      setState(() {
+        cartItems.removeWhere((item) {
+          if (item.id == cartItemId) {
+            print('Removing item with ID: ${item.id}');
+            return true;
+          }
+          return false;
+        });
+      });
+    }
+    else {
+      print('Failed to delete item!');
+    }
   }
 
   @override
@@ -84,7 +103,9 @@ class _OrderProductState extends State<OrderProduct> {
                         ],
                       ),
                       InkWell(
-                        onTap: () async {},
+                        onTap: () async {
+                          await _removeCartItem(item.id);
+                        },
                         child: Ink(
                           child: Container(
                             padding: const EdgeInsets.all(5),
