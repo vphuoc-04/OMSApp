@@ -21,12 +21,18 @@ class CartController extends Controller
             return response()->json(['message' => 'User ID is missing'], 400);
         }
 
+        $quantity = $request->quantity;
+        $price = $request->price;
+
+        $finalPrice = $price * $quantity;
+
         $cartItem = Cart::create([
             'user_id' => $user->id,
             'product_id' => $request->product_id,
             'name' => $request->name,
-            'price' => $request->price,
+            'price' => $finalPrice,
             'img' => $request->img,
+            'quantity' => $quantity,
             'invoice_date' => now(),
         ]);
 
@@ -38,9 +44,15 @@ class CartController extends Controller
 
     // Get data cart
     public function getDataCart(Request $request) {
-        $cart = Cart::all();
+        $user = Auth::user();
 
-        return response()->json($cart);
+        if (!$user) {
+            return response()->json(['message' => 'User not logged in'], 401);
+        }
+
+        $cart = Cart::where('user_id', $user->id)->get();
+
+        return response()->json($cart, 200);
     }
 
     // Delete data cart
@@ -65,6 +77,52 @@ class CartController extends Controller
         }
         catch (\Exception $e) {
             return response()->json(['message' => 'Fail to delete cart item', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Change quantity product in cart
+    public function changeQuantityProductCart(Request $request, $id) {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not logged in'], 401);
+            }
+
+            $request->validate([
+                'quantity' => 'required|integer|min:1',
+            ]);
+
+            $quantity = $request->input('quantity');
+
+            $cartItem = Cart::where('user_id', $user->id)->where('id', $id)->first();
+
+            if (!$cartItem) {
+                return response()->json(['message' => 'Cart item not found'], 404);
+            }
+
+            $currentPrice = $cartItem->price;
+
+            $currentQuantity = $cartItem->quantity;
+
+            $unitPrice = $currentPrice / $currentQuantity;
+
+            $newPrice = $unitPrice * $quantity;
+
+            $cartItem->quantity = $quantity;
+
+            $cartItem->price = $newPrice;
+
+            $cartItem->save();
+
+            return response()->json(['message' => 'Cart item quantity updated successfully', 'cart_item' => $cartItem], 200);
+
+        }
+        catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while updating the cart item.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 }

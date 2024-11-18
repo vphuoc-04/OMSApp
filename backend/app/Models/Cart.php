@@ -17,6 +17,7 @@ class Cart extends Model
         'name',
         'price',
         'img',
+        'quantity',
         'invoice_date',
     ];
 }

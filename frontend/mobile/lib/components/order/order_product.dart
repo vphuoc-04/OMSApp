@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 
@@ -22,6 +23,7 @@ class _OrderProductState extends State<OrderProduct> {
     _fetchCartItems();
   }
 
+  // Get product data in orders
   Future<void> _fetchCartItems() async {
     var items = await cartService.getDataCart(); 
     setState(() {
@@ -29,6 +31,7 @@ class _OrderProductState extends State<OrderProduct> {
     });
   }
 
+  // Delete product data in orders
   Future<void> _removeCartItem(int cartItemId) async {
     bool success = await cartService.removeCartItem(cartItemId);
 
@@ -47,6 +50,26 @@ class _OrderProductState extends State<OrderProduct> {
       print('Failed to delete item!');
     }
   }
+
+  // Change prodcut data in orders
+  Future<void> _updateCartItemQuantity(int cartItemId, int newQuantity) async {
+    bool success = await cartService.changeQuantity(cartItemId, newQuantity);
+
+    if (success) {
+      setState(() {
+        cartItems = cartItems.map((item) {
+          if (item.id == cartItemId) {
+            double newPrice = item.price / item.quantity * newQuantity;  
+            return item.copyWith(quantity: newQuantity, price: newPrice); 
+          }
+          return item;
+        }).toList();
+      });
+    } else {
+      print('Failed to update quantity!');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +120,56 @@ class _OrderProductState extends State<OrderProduct> {
                                   ),
                                 ), 
                               ),
-                              Text('${item.price} VNĐ'),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  Text('${item.price} VNĐ'),
+                                  SizedBox(width: 10),
+                                  InkWell(
+                                      onTap: () {
+                                      if (item.quantity > 1) {
+                                        _updateCartItemQuantity(item.id, item.quantity - 1);
+                                      }
+                                    },
+                                    child: Ink(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(1),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromRGBO(67, 169, 162, 1),
+                                          borderRadius: BorderRadius.circular(60),
+                                        ),
+                                        child: Icon(
+                                          CupertinoIcons.minus, 
+                                          color: Color.fromRGBO(255, 255, 255, 50),
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text('${item.quantity}'),
+                                  SizedBox(width: 10),
+                                  InkWell(
+                                    onTap: () {
+                                      _updateCartItemQuantity(item.id, item.quantity + 1);
+                                    },
+                                    child: Ink(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(1),
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromRGBO(67, 169, 162, 1),
+                                          borderRadius: BorderRadius.circular(60),
+                                        ),
+                                        child: Icon(
+                                          CupertinoIcons.add, 
+                                          color: Color.fromRGBO(255, 255, 255, 50),
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              )
                             ],
                           ),
                         ],

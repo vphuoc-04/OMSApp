@@ -20,6 +20,7 @@ class SingleProduct extends StatefulWidget {
 class _SingleProductState extends State<SingleProduct> {
   int? userId;
   String? token;
+  int quantity = 1;
 
   @override
   void initState() {
@@ -78,10 +79,56 @@ class _SingleProductState extends State<SingleProduct> {
                     style: const TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 20),
-                  Text(
-                    '${widget.product.price} VNĐ',
-                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Color.fromARGB(206, 0, 0, 0)),
+                          borderRadius: BorderRadius.circular(10)
+                        ),
+                        child: Row(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                if (quantity > 1) {
+                                  setState(() {
+                                    quantity--;
+                                  });
+                                }
+                              },
+                              child: Icon(CupertinoIcons.minus),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                '$quantity', 
+                                style: TextStyle(
+                                  color: Color.fromARGB(206, 0, 0, 0),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20
+                                ),
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  quantity++;
+                                });
+                              },
+                              child: Icon(CupertinoIcons.add),
+                            )
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '${widget.product.price * quantity} VNĐ',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 20),
                   InkWell(
                     onTap: () async {
                       if (token == null || userId == null) {
@@ -92,7 +139,7 @@ class _SingleProductState extends State<SingleProduct> {
                       }
 
                       try {
-                        await cartService.addToCart(widget.product.id, 1, widget.product.name, widget.product.price, widget.product.img);
+                        await cartService.addToCart(widget.product.id, quantity, widget.product.name, widget.product.price, widget.product.img);
                         print('Product added to cart!');
                       } 
                       catch (e) {

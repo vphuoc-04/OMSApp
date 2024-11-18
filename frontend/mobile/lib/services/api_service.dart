@@ -69,4 +69,19 @@ class ApiService {
       },
     );
   }
+
+  // Put method
+  Future<http.Response> put(String endpoint, Map<String, dynamic> body,{Map<String, String>? extraHeaders}) async {
+    final url = Uri.parse('$baseUrl/$endpoint');
+    final token = await TokenService.loadToken();
+    return await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+        if (extraHeaders != null) ...extraHeaders,
+      },
+      body: json.encode(body),
+    );
+  }
 }

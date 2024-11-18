@@ -5,7 +5,6 @@ class Cart {
   final double price;
   final String img;
   final int quantity;
-  final double totalPrice;
   final DateTime invoiceDate;
 
   Cart({
@@ -15,7 +14,6 @@ class Cart {
     required this.price,
     required this.img,
     required this.quantity,
-    required this.totalPrice,
     required this.invoiceDate,
   });
 
@@ -27,7 +25,6 @@ class Cart {
       price: json['price'] != null ? double.parse(json['price'].toString()) : 0.0, 
       quantity: json['quantity'] ?? 0, 
       img: json['img'] ?? '', 
-      totalPrice: json['total_price'] != null ? double.parse(json['total_price'].toString()) : 0.0, 
       invoiceDate: json['invoice_date'] != null ? DateTime.parse(json['invoice_date']) : DateTime.now(),
     );
   }
@@ -39,8 +36,27 @@ class Cart {
       'name': name,
       'price': price,
       'quantity': quantity,
-      'total_price': totalPrice,
       'invoice_date': invoiceDate.toIso8601String(),
     };
+  }
+
+  Cart copyWith({
+    int? id,
+    int? productId,
+    String? name,
+    double? price,
+    String? img,
+    int? quantity,
+    DateTime? invoiceDate,
+  }) {
+    return Cart(
+      id: id ?? this.id,
+      productId: productId ?? this.productId,
+      name: name ?? this.name,
+      price: price ?? this.price,
+      img: img ?? this.img,
+      quantity: quantity ?? this.quantity,
+      invoiceDate: invoiceDate ?? this.invoiceDate,
+    );
   }
 }

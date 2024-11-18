@@ -29,9 +29,10 @@ Route::get('/product/search', [ProductController::class, 'searchProduct']);
 
 // Cart api
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('cart/data', [CartController::class, 'getDataCart']);
     Route::post('cart/add', [CartController::class, 'addToCart']);
     Route::delete('cart/delete/{id}', [CartController::class, 'deleteDataCart']);
+    Route::put('cart/change/quantity/{id}', [CartController::class, 'changeQuantityProductCart']);
 });
-Route::get('cart/data', [CartController::class, 'getDataCart']);
 
 

@@ -24,6 +24,7 @@ class CartService {
     try {
       final response = await apiService.post('cart/add', {
           'product_id': productId,
+          'quantity': quantity,
           'name': name,
           'price': price,
           'img': img,
@@ -104,6 +105,36 @@ class CartService {
     } 
     catch (e) {
       print('Error while deleting cart item: $e');
+      return false;
+    }
+  }
+
+  // Update quantity product in cart
+  Future<bool> changeQuantity(int cartItemId, int quantity) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    int? userId = prefs.getInt('user_id');
+
+    if (token == null || userId == null) {
+      print('User not logged in!');
+      return false;
+    }
+
+    try {
+      final response = await apiService.put('cart/change/quantity/$cartItemId', 
+        {'quantity': quantity},
+      );
+      if (response.statusCode == 200) {
+        print('Quantity updated successfully');
+        return true;
+      } 
+      else {
+        print('Failed to update quantity: ${response.body}');
+        return false;
+      }
+    } 
+    catch (e) {
+      print('Error updating cart item: $e');
       return false;
     }
   }
