@@ -1,10 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 
-// Icon
-import 'package:iconly/iconly.dart'; 
+// Model
+import 'package:mobile/models/cart.dart';
 
-class CustomNavigationBar extends StatelessWidget {
+// Service
+import 'package:mobile/services/cart_service.dart'; 
+
+class CustomNavigationBar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemTapped;
   final double iconSize; 
@@ -15,6 +19,28 @@ class CustomNavigationBar extends StatelessWidget {
     required this.onItemTapped,
     this.iconSize = 27.0, 
   }) : super(key: key);
+
+  @override
+  _CustomNavigationBarState createState() => _CustomNavigationBarState();
+}
+
+class _CustomNavigationBarState extends State<CustomNavigationBar> {
+  final CartService cartService = CartService();
+  int cartCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartCount();
+  }
+
+  Future<void> _loadCartCount() async {
+    List<Cart> cartItems = await cartService.getDataCart();  
+    int totalQuantity = cartItems.fold(0, (sum, item) => sum + item.quantity);  
+    setState(() {
+      cartCount = totalQuantity;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,36 +57,61 @@ class CustomNavigationBar extends StatelessWidget {
         child: Container(
           height: 50,
           child: NavigationBar(
-            selectedIndex: selectedIndex,
-            onDestinationSelected: onItemTapped,
+            selectedIndex: widget.selectedIndex,
+            onDestinationSelected: widget.onItemTapped,
             destinations: [
               NavigationDestination(
                 icon: Icon(
-                  selectedIndex == 0 ? IconlyBold.home : IconlyLight.home,
-                  color: selectedIndex == 0
+                  widget.selectedIndex == 0 ? IconlyBold.home : IconlyLight.home,
+                  color: widget.selectedIndex == 0
                       ? const Color.fromRGBO(67, 169, 162, 1)
                       : Colors.grey,
-                  size: iconSize, 
+                  size: widget.iconSize,
+                ),
+                label: '',
+              ),
+              NavigationDestination(
+                icon: Stack(
+                  clipBehavior: Clip.none, 
+                  children: [
+                    Icon(
+                      CupertinoIcons.cart,
+                      color: widget.selectedIndex == 1
+                          ? const Color.fromRGBO(67, 169, 162, 1)
+                          : Colors.grey,
+                      size: widget.iconSize,
+                    ),
+                    if (cartCount > 0) 
+                      Positioned(
+                        left: 18,
+                        bottom: 10,
+                        child: Container(
+                          padding: EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '$cartCount',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 label: '',
               ),
               NavigationDestination(
                 icon: Icon(
-                  selectedIndex == 1 ? CupertinoIcons.cart : CupertinoIcons.cart,
-                  color: selectedIndex == 1
+                  widget.selectedIndex == 2 ? IconlyBold.profile : IconlyLight.profile,
+                  color: widget.selectedIndex == 2
                       ? const Color.fromRGBO(67, 169, 162, 1)
                       : Colors.grey,
-                  size: iconSize, 
-                ),
-                label: '',
-              ),
-              NavigationDestination(
-                icon: Icon(
-                  selectedIndex == 2 ? IconlyBold.profile : IconlyLight.profile,
-                  color: selectedIndex == 2
-                      ? const Color.fromRGBO(67, 169, 162, 1)
-                      : Colors.grey,
-                  size: iconSize,
+                  size: widget.iconSize,
                 ),
                 label: '',
               ),
