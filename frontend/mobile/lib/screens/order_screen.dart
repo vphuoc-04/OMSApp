@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile/components/order/order_product.dart';
+import 'package:mobile/components/order/payment.dart';
 
 class OrderScreen extends StatelessWidget {
   @override
@@ -7,9 +8,16 @@ class OrderScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 1),
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: EdgeInsets.all(0),
         child: Center(
-          child: OrderProduct(),
+          child: Column(
+            children: [
+              Expanded(
+                child: OrderProduct()
+              ),
+              Payment()
+            ],
+          ),
         ),
       ),
     );
