@@ -139,7 +139,7 @@ class _SingleProductState extends State<SingleProduct> {
                       }
 
                       try {
-                        await cartService.addToCart(widget.product.id, quantity, widget.product.name, widget.product.price, widget.product.img);
+                        await cartService.addToCart(widget.product.id, quantity, widget.product.name, widget.product.productCode, widget.product.price, widget.product.img);
                         print('Product added to cart!');
                       } 
                       catch (e) {

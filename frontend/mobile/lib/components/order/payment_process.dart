@@ -9,16 +9,93 @@ import 'package:mobile/models/cart.dart';
 
 class PaymentProcess extends StatelessWidget {
   final CartService cartService = CartService();
+  final int selectedMethodIndex;
+
+  PaymentProcess({required this.selectedMethodIndex});
 
   Future<double> calculateTotalPrice() async {
     List<Cart> cartItems = await cartService.getDataCart();
-    
     double totalPrice = 0.0;
-    
+
     for (var item in cartItems) {
       totalPrice += item.price; 
     }
     return totalPrice; 
+  }
+
+  void _showPaymentInputCash(BuildContext context, double totalPrice) {
+    final TextEditingController customerGivenController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Payment Process', textAlign: TextAlign.center,),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Total Amount: \VNĐ\t${totalPrice.toStringAsFixed(2)}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: customerGivenController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'Customer Given Amount',
+                  hintStyle: TextStyle(
+                    fontWeight: FontWeight.w300
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromRGBO(0, 0, 0, 200)),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Color.fromRGBO(67, 169, 162, 1)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Color.fromARGB(255, 169, 67, 67)),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                double? customerGiven = double.tryParse(customerGivenController.text);
+                if (customerGiven == null || customerGiven < totalPrice) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Invalid amount. Please enter a valid amount.'),
+                    ),
+                  );
+                } 
+                else {
+                  double changeDue = customerGiven - totalPrice;
+                  Navigator.of(context).pop(); 
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Payment successful. Change due: \VNĐ\t${changeDue.toStringAsFixed(2)}'),
+                    ),
+                  );
+                }
+              },
+              child: Text(
+                'Pay',
+                style: TextStyle(color: Color.fromRGBO(67, 169, 162, 1)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -53,20 +130,46 @@ class PaymentProcess extends StatelessWidget {
                     fontSize: 15
                   ),
                 ),
-                Row(
-                  children: [
-                    Text(
-                      'Process',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15
+                GestureDetector(
+                  onTap: () {
+                    if (selectedMethodIndex == -1) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Select Payment Method', textAlign: TextAlign.center,),
+                            content: Text('You need to select a payment method before proceeding.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: Text('OK', style: TextStyle(color: Color.fromRGBO(67, 162, 169, 1)),),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    } 
+                    else {
+                      _showPaymentInputCash(context, snapshot.data!);
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        'Process',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                        ),
                       ),
-                    ),
-                    Icon(
-                      CupertinoIcons.cart, color: Colors.white, size: 20,
-                    )
-                  ],
-                )
+                      Icon(
+                        CupertinoIcons.cart,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           );

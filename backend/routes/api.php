@@ -14,6 +14,9 @@ use App\Http\Controllers\ProductController;
 // Cart
 use App\Http\Controllers\CartController;
 
+// Payment
+use App\Http\Controllers\PaymentController;
+
 // Auth api
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -36,3 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
+// Payment api
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('payment/process', [PaymentController::class, 'processPayment']);
+});

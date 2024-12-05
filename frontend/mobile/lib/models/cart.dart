@@ -1,6 +1,7 @@
 class Cart {
   final int id;
   final int productId;
+  final String productCode;
   final String name;
   final double price;
   final String img;
@@ -10,6 +11,7 @@ class Cart {
   Cart({
     required this.id,
     required this.productId,
+    required this.productCode,
     required this.name,
     required this.price,
     required this.img,
@@ -21,6 +23,7 @@ class Cart {
     return Cart(
       id: json['id'],
       productId: json['product_id'] ?? 0, 
+      productCode: json['product_code'],
       name: json['name'] ?? '', 
       price: json['price'] != null ? double.parse(json['price'].toString()) : 0.0, 
       quantity: json['quantity'] ?? 0, 
@@ -33,6 +36,7 @@ class Cart {
     return {
       'id': id,
       'product_id': productId,
+      'product_code': productCode,
       'name': name,
       'price': price,
       'quantity': quantity,
@@ -43,6 +47,7 @@ class Cart {
   Cart copyWith({
     int? id,
     int? productId,
+    String? productCode,
     String? name,
     double? price,
     String? img,
@@ -52,6 +57,7 @@ class Cart {
     return Cart(
       id: id ?? this.id,
       productId: productId ?? this.productId,
+      productCode: productCode ?? this.productCode,
       name: name ?? this.name,
       price: price ?? this.price,
       img: img ?? this.img,

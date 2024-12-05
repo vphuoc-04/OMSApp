@@ -10,8 +10,15 @@ import 'package:mobile/services/cart_service.dart';
 // Model
 import 'package:mobile/models/cart.dart';
 
-class Payment extends StatelessWidget {
+class Payment extends StatefulWidget {
+  @override
+  _PaymentState createState() => _PaymentState();
+}
+
+class _PaymentState extends State<Payment> {
   final CartService cartService = CartService();
+  int selectedMethodIndex = -1;
+  bool isCashSelected = false;
 
   Future<double> calculateTotalPrice() async {
     List<Cart> cartItems = await cartService.getDataCart();
@@ -28,14 +35,14 @@ class Payment extends StatelessWidget {
     return FutureBuilder<double>(
       future: calculateTotalPrice(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+        if (selectedMethodIndex == -1 && snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator(color: Color.fromRGBO(67, 162, 169, 1),));
         } 
         else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } 
         else if (!snapshot.hasData || snapshot.data == 0) {
-          return SizedBox.shrink();
+          return SizedBox.shrink(); 
         } 
         else {
           return Container(
@@ -48,9 +55,15 @@ class Payment extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                PaymentMethod(), 
+                PaymentMethod(
+                  onMethodSelected: (int methodIndex) {
+                    setState(() {
+                      selectedMethodIndex = methodIndex;
+                    });
+                  },
+                ),
                 SizedBox(height: 10),
-                PaymentProcess(),
+                PaymentProcess(selectedMethodIndex: selectedMethodIndex),
               ],
             ),
           );

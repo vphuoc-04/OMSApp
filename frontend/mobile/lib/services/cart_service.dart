@@ -11,7 +11,7 @@ class CartService {
   final ApiService apiService = ApiService();
 
   // Add to cart
-  Future<void> addToCart(int productId, int quantity, String name, double price, String img) async {
+  Future<void> addToCart(int productId, int quantity, String name, String productCode, double price, String img) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     int? userId = prefs.getInt('user_id');
@@ -26,6 +26,7 @@ class CartService {
           'product_id': productId,
           'quantity': quantity,
           'name': name,
+          'product_code': productCode,
           'price': price,
           'img': img,
           'user_id': userId,
