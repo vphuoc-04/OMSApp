@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 // Icon
 import 'package:google_fonts/google_fonts.dart';
+
+// Components
 import 'package:mobile/components/layout/custom_navigation_bar.dart';
 
 // Screens
 import 'package:mobile/screens/home_screen.dart';
 import 'package:mobile/screens/order_screen.dart';
 import 'package:mobile/screens/profile_screen.dart';
+import 'package:mobile/screens/history_screen.dart';
 
 class LayoutScreen extends StatefulWidget {
   final int? id;
@@ -27,6 +30,7 @@ class _LayoutScreenState extends State<LayoutScreen> {
     _screens = <Widget>[
       HomeScreen(),
       OrderScreen(),
+      HistoryScreen(),
       ProfileScreen(),  
     ];
   }

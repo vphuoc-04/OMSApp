@@ -75,7 +75,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                   clipBehavior: Clip.none, 
                   children: [
                     Icon(
-                      CupertinoIcons.cart,
+                    widget.selectedIndex == 1 ? IconlyBold.buy : IconlyLight.buy,
                       color: widget.selectedIndex == 1
                           ? const Color.fromRGBO(67, 169, 162, 1)
                           : Colors.grey,
@@ -107,8 +107,18 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
               ),
               NavigationDestination(
                 icon: Icon(
-                  widget.selectedIndex == 2 ? IconlyBold.profile : IconlyLight.profile,
-                  color: widget.selectedIndex == 2
+                  widget.selectedIndex == 2 ? Icons.access_time_filled : Icons.access_time,
+                  color: widget.selectedIndex == 2 
+                      ? const Color.fromRGBO(67, 169, 162, 1)
+                      : Colors.grey,
+                  size: widget.iconSize,
+                ), 
+                label: ''
+              ),
+              NavigationDestination(
+                icon: Icon(
+                  widget.selectedIndex == 3 ? IconlyBold.profile : IconlyLight.profile,
+                  color: widget.selectedIndex == 3
                       ? const Color.fromRGBO(67, 169, 162, 1)
                       : Colors.grey,
                   size: widget.iconSize,

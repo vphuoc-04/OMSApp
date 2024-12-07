@@ -38,8 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('cart/change/quantity/{id}', [CartController::class, 'changeQuantityProductCart']);
 });
 
-
 // Payment api
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('payment/process', [PaymentController::class, 'processPayment']);
+    Route::get('payment/history', [PaymentController::class, 'getPaymentHistory']);
 });

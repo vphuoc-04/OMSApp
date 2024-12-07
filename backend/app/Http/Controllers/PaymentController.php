@@ -72,4 +72,16 @@ class PaymentController extends Controller
             ], 500);
         }
     }
+
+    public function getPaymentHistory (Request $request) {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not logged in'], 401);
+        }
+
+        $payment = Payment::where('user_id', $user->id)->get();
+
+        return response()->json($payment, 200);
+    }
 }

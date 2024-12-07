@@ -4,6 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 // Services
 import 'package:mobile/services/api_service.dart';
 
+// Model
+import 'package:mobile/models/payment.dart';
+
 class PaymentService {
   final ApiService apiService = ApiService();
 
@@ -42,6 +45,38 @@ class PaymentService {
     catch (e) {
       print('Error while processing payment: $e');
       throw e;
+    }
+  }
+
+  Future<List<Payment>> getPaymentHistory() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token'); 
+
+    if (token == null) {
+      return [];
+    }
+
+    try {
+      final response = await apiService.get(
+        'payment/history',
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body);
+        
+        return data.map((item) => Payment.fromJson(item)).toList();
+      } 
+      else {
+        print('Error: ${response.body}');
+        return [];
+      }
+    } 
+    catch (e) {
+      print('Error while fetching cart items: $e');
+      return [];
     }
   }
 }
