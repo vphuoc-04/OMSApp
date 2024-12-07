@@ -4,9 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:mobile/components/order/payment_cash.dart';
 
 class PaymentMethod extends StatefulWidget {
-  final Function(int) onMethodSelected;  
+  final Function(int) onMethodSelected;
+  final List<Map<String, dynamic>> paymentMethods;   
 
-  PaymentMethod({required this.onMethodSelected});
+  PaymentMethod({
+    required this.onMethodSelected,
+    required this.paymentMethods
+  });
 
   @override
   _PaymentMethodState createState() => _PaymentMethodState();
@@ -15,17 +19,13 @@ class PaymentMethod extends StatefulWidget {
 class _PaymentMethodState extends State<PaymentMethod> {
   int selectedMethodIndex = -1; 
 
-  final List<Map<String, dynamic>> paymentMethods = [
-    { 'name': 'Cash', },
-  ];
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: paymentMethods.map((paymentMethod) {
-          int index = paymentMethods.indexOf(paymentMethod);
+        children: widget.paymentMethods.map((paymentMethod) {
+          int index = widget.paymentMethods.indexOf(paymentMethod);
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
@@ -35,7 +35,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                 });
                 widget.onMethodSelected(selectedMethodIndex);
                 if (selectedMethodIndex != -1) {
-                  print('Selected Payment Method: ${paymentMethods[selectedMethodIndex]['name']}');
+                  print('Selected Payment Method: ${widget.paymentMethods[selectedMethodIndex]['name']}');
                 } 
                 else {
                   print('No Payment Method Selected');
@@ -49,7 +49,7 @@ class _PaymentMethodState extends State<PaymentMethod> {
                   });
                   widget.onMethodSelected(selectedMethodIndex);
                   if (selectedMethodIndex != -1) {
-                    print('Selected Payment Method: ${paymentMethods[selectedMethodIndex]['name']}');
+                    print('Selected Payment Method: ${widget.paymentMethods[selectedMethodIndex]['name']}');
                   } 
                   else {
                     print('No Payment Method Selected');

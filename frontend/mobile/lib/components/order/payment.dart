@@ -20,6 +20,10 @@ class _PaymentState extends State<Payment> {
   int selectedMethodIndex = -1;
   bool isCashSelected = false;
 
+  final List<Map<String, dynamic>> paymentMethods = [
+    {'name': 'Cash'},
+  ];
+
   Future<double> calculateTotalPrice() async {
     List<Cart> cartItems = await cartService.getDataCart();
     double totalPrice = 0.0;
@@ -61,9 +65,13 @@ class _PaymentState extends State<Payment> {
                       selectedMethodIndex = methodIndex;
                     });
                   },
+                  paymentMethods: paymentMethods,
                 ),
                 SizedBox(height: 10),
-                PaymentProcess(selectedMethodIndex: selectedMethodIndex),
+                PaymentProcess(
+                  selectedMethodIndex: selectedMethodIndex,
+                  paymentMethods: paymentMethods, 
+                ),
               ],
             ),
           );

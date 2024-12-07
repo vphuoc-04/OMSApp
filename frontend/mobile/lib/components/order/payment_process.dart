@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 
 // Service
 import 'package:mobile/services/cart_service.dart';
+import 'package:mobile/services/payment_service.dart';
 
 // Model
 import 'package:mobile/models/cart.dart';
 
 class PaymentProcess extends StatelessWidget {
   final CartService cartService = CartService();
+  final PaymentService paymentService = PaymentService();
   final int selectedMethodIndex;
+  final List<Map<String, dynamic>> paymentMethods;
 
-  PaymentProcess({required this.selectedMethodIndex});
+  PaymentProcess({
+    required this.selectedMethodIndex,
+    required this.paymentMethods,
+  });
 
   Future<double> calculateTotalPrice() async {
     List<Cart> cartItems = await cartService.getDataCart();
@@ -25,6 +31,9 @@ class PaymentProcess extends StatelessWidget {
 
   void _showPaymentInputCash(BuildContext context, double totalPrice) {
     final TextEditingController customerGivenController = TextEditingController();
+    String paymentMethod = selectedMethodIndex != -1
+        ? paymentMethods[selectedMethodIndex]['name']
+        : 'Unknown';
     
     showDialog(
       context: context,
@@ -68,7 +77,7 @@ class PaymentProcess extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 double? customerGiven = double.tryParse(customerGivenController.text);
                 if (customerGiven == null || customerGiven < totalPrice) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -78,13 +87,24 @@ class PaymentProcess extends StatelessWidget {
                   );
                 } 
                 else {
-                  double changeDue = customerGiven - totalPrice;
-                  Navigator.of(context).pop(); 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Payment successful. Change due: \VNĐ\t${changeDue.toStringAsFixed(2)}'),
-                    ),
-                  );
+                  try {
+                    await paymentService.processPayment(totalPrice: totalPrice, customerGiven: customerGiven, paymentMethod: paymentMethod,);
+                    double changeDue = customerGiven - totalPrice;
+                    Navigator.of(context).pop(); 
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Payment successful. Change due: \VNĐ\t${changeDue.toStringAsFixed(2)}'),
+                      ),
+                    );
+                  }
+                  catch (err) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Payment failed: $err'),
+                      ),
+                    );
+                  }
                 }
               },
               child: Text(
