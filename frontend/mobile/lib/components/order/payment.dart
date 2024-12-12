@@ -22,6 +22,7 @@ class _PaymentState extends State<Payment> {
 
   final List<Map<String, dynamic>> paymentMethods = [
     {'name': 'Cash'},
+    {'name': 'QR Code'}
   ];
 
   Future<double> calculateTotalPrice() async {
