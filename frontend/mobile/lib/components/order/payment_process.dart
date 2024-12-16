@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 // Service
 import 'package:mobile/services/cart_service.dart';
@@ -29,6 +30,7 @@ class PaymentProcess extends StatelessWidget {
     return totalPrice; 
   }
 
+  // Cash
   void _showPaymentInputCash(BuildContext context, double totalPrice) {
     final TextEditingController customerGivenController = TextEditingController();
     String paymentMethod = selectedMethodIndex != -1
@@ -118,6 +120,53 @@ class PaymentProcess extends StatelessWidget {
     );
   }
 
+  // QR Code
+  void _showQRCode(BuildContext context, double totalPrice) {
+    String paymentQRData = "Payment: VNĐ ${totalPrice.toStringAsFixed(2)}";
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Scan to Pay',
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.white,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+            Container(
+              width: 200, 
+              height: 200,
+              child: QrImageView(
+                data: paymentQRData,
+                version: QrVersions.auto,
+                size: 200.0,
+                backgroundColor: Colors.white,
+              ),
+            ),
+              SizedBox(height: 10),
+              Text(
+                'Total Amount: VNĐ ${totalPrice.toStringAsFixed(2)}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Close',
+                style: TextStyle(color: Color.fromARGB(255, 169, 67, 67)),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<double>(
@@ -133,6 +182,7 @@ class PaymentProcess extends StatelessWidget {
           return Center(child: Text(''));
         }
         else {
+          double totalPrice = snapshot.data!;
           return Container(
             width: MediaQuery.of(context).size.width - 20,
             decoration: BoxDecoration(
@@ -169,8 +219,11 @@ class PaymentProcess extends StatelessWidget {
                         },
                       );
                     } 
+                    else if (paymentMethods[selectedMethodIndex]['name'] == 'QR Code') {
+                      _showQRCode(context, totalPrice);
+                    } 
                     else {
-                      _showPaymentInputCash(context, snapshot.data!);
+                      _showPaymentInputCash(context, totalPrice);
                     }
                   },
                   child: Row(
